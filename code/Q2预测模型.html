@@ -13115,7 +13115,7 @@ div#notebook {
 
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[325]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -13124,6 +13124,8 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">linear_model</span>
 <span class="kn">import</span> <span class="nn">xgboost</span> <span class="k">as</span> <span class="nn">xgb</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">PolynomialFeatures</span>
+<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
 </pre></div>
 
     </div>
@@ -13140,7 +13142,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[210]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">nume</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;转炉终点温度&#39;</span><span class="p">,</span> <span class="s1">&#39;转炉终点C&#39;</span><span class="p">,</span> <span class="s1">&#39;转炉终点S&#39;</span><span class="p">,</span>
@@ -13167,7 +13169,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[265]:</div>
+<div class="prompt input_prompt">In&nbsp;[41]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">CTrain</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;q1_1_收得率.xls&#39;</span><span class="p">)[</span><span class="n">nume</span><span class="o">+</span><span class="p">[</span><span class="s1">&#39;C收得率&#39;</span><span class="p">]]</span>
@@ -13190,7 +13192,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[265]:</div>
+    <div class="prompt output_prompt">Out[41]:</div>
 
 
 
@@ -13207,7 +13209,20 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[323]:</div>
+<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Y.sort_values(&#39;C收得率&#39;)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># #缺失值数量统计</span>
@@ -13221,7 +13236,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[267]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">CTrain</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
@@ -13237,7 +13252,7 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[267]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -13322,7 +13337,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[335]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_target</span><span class="p">,</span> <span class="n">test_target</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">Y</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
@@ -13342,7 +13357,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[339]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">DecisionTreeRegressor</span><span class="p">()</span> 
@@ -13361,13 +13376,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[339]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(-0.1515869933289944, 0.06560714310570313, 0.010217992437542758)</pre>
+<pre>(0.4545824944005028, 0.07108884541492747, 0.012894716809077464)</pre>
 </div>
 
 </div>
@@ -13379,13 +13394,21 @@ div#notebook {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>以上三个值分别为R2决定系数、平均绝对误差、平均平方误差</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="&#32447;&#24615;&#22238;&#24402;">&#32447;&#24615;&#22238;&#24402;<a class="anchor-link" href="#&#32447;&#24615;&#22238;&#24402;">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[340]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">()</span>
@@ -13404,13 +13427,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[340]:</div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(0.9130465056423822, 0.027141434214317157, 0.001267350494100081)</pre>
+<pre>(0.9099656684715688, 0.026216298410962006, 0.0015440533035037253)</pre>
 </div>
 
 </div>
@@ -13428,7 +13451,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[341]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVR</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
@@ -13447,13 +13470,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[341]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(-2.980689372403678, 0.05004266858204905, 0.006912589625992675)</pre>
+<pre>(-4.833931069624149, 0.059188343217189535, 0.010268864380762696)</pre>
 </div>
 
 </div>
@@ -13471,7 +13494,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[342]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">BayesianRidge</span><span class="p">()</span>
@@ -13490,13 +13513,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[342]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(0.9111409159589139, 0.02711932958385213, 0.001272936453247817)</pre>
+<pre>(0.9084454994407186, 0.026243963888284323, 0.0015575216199905776)</pre>
 </div>
 
 </div>
@@ -13514,7 +13537,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[345]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">clf</span> <span class="o">=</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">GradientBoostingRegressor</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;ls&#39;</span><span class="p">)</span>
@@ -13533,13 +13556,13 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[345]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(-4.684867199839898, 0.053272618055577356, 0.007577338095989948)</pre>
+<pre>(0.4159079879234169, 0.05607651348284832, 0.005736917959389787)</pre>
 </div>
 
 </div>
@@ -13557,12 +13580,10 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[346]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">PolynomialFeatures</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">)),(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">))])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">)),(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">))])</span>
 <span class="n">clf</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span><span class="n">train_target</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 <span class="n">pre_y</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
 <span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">),</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">),</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">)</span>
@@ -13578,17 +13599,173 @@ div#notebook {
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[346]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(0.8664093632372909, 0.016723627794210886, 0.001873739885633892)</pre>
+<pre>(0.9678501751849449, 0.011652294332522305, 0.00046880457138652877)</pre>
 </div>
 
 </div>
 
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Mn&#20803;&#32032;&#39044;&#27979;">Mn&#20803;&#32032;&#39044;&#27979;<a class="anchor-link" href="#Mn&#20803;&#32032;&#39044;&#27979;">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="&#25968;&#25454;&#39044;&#22788;&#29702;">&#25968;&#25454;&#39044;&#22788;&#29702;<a class="anchor-link" href="#&#25968;&#25454;&#39044;&#22788;&#29702;">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">nume</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;转炉终点温度&#39;</span><span class="p">,</span> <span class="s1">&#39;转炉终点C&#39;</span><span class="p">,</span> <span class="s1">&#39;转炉终点Mn&#39;</span><span class="p">,</span> <span class="s1">&#39;转炉终点S&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;转炉终点Si&#39;</span><span class="p">,</span> <span class="s1">&#39;钢水净重&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样C&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Mn&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样S&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样P&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Si&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;连铸正样Ceq_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Cr&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Ni_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Cu_val&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;连铸正样V_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Alt_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Als_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Mo_val&#39;</span><span class="p">,</span> <span class="s1">&#39;连铸正样Ti_val&#39;</span><span class="p">,</span> <span class="s1">&#39;氮化钒铁FeV55N11-A&#39;</span><span class="p">,</span> <span class="s1">&#39;低铝硅铁&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;钒氮合金(进口)&#39;</span><span class="p">,</span> <span class="s1">&#39;钒铁(FeV50-A)&#39;</span><span class="p">,</span> <span class="s1">&#39;钒铁(FeV50-B)&#39;</span><span class="p">,</span> <span class="s1">&#39;钒铁(FeV50-B).1&#39;</span><span class="p">,</span> <span class="s1">&#39;硅铝钙&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;硅铝合金FeAl30Si25&#39;</span><span class="p">,</span> <span class="s1">&#39;硅铝锰合金球&#39;</span><span class="p">,</span> <span class="s1">&#39;硅锰面（硅锰渣）&#39;</span><span class="p">,</span> <span class="s1">&#39;硅铁(合格块)&#39;</span><span class="p">,</span> <span class="s1">&#39;硅铁FeSi75-B&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;石油焦增碳剂&#39;</span><span class="p">,</span> <span class="s1">&#39;锰硅合金FeMn64Si27(合格块)&#39;</span><span class="p">,</span> <span class="s1">&#39;锰硅合金FeMn68Si18(合格块)&#39;</span><span class="p">,</span> <span class="s1">&#39;碳化硅(55%)&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;硅钙碳脱氧剂&#39;</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">MnTrain</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="s1">&#39;data1.xlsx&#39;</span><span class="p">)[</span><span class="n">nume</span><span class="p">]</span>
+<span class="c1"># Mn初始含量较低，对反应收得率影响小，使用均值替换缺失值</span>
+<span class="n">MnTrain</span><span class="p">[[</span><span class="s1">&#39;转炉终点Mn&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="p">[[</span><span class="s1">&#39;转炉终点Mn&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[[</span><span class="s1">&#39;转炉终点Mn&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="c1"># 去掉为对合金化后合金钢采样的数据</span>
+<span class="n">MnTrain</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[</span><span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;连铸正样Mn&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="c1"># 使用均值替代少量的缺失值</span>
+<span class="n">MnTrain</span><span class="p">[</span><span class="n">nume</span><span class="p">]</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="p">[</span><span class="n">nume</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[</span><span class="n">nume</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="c1"># 重新计算Mn收得率</span>
+<span class="n">mn_t</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;硅铝锰合金球&#39;</span><span class="p">,</span><span class="s1">&#39;硅锰面（硅锰渣）&#39;</span><span class="p">,</span><span class="s1">&#39;锰硅合金FeMn64Si27(合格块)&#39;</span><span class="p">,</span><span class="s1">&#39;锰硅合金FeMn68Si18(合格块)&#39;</span><span class="p">]</span>
+<span class="n">mn_p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span><span class="mf">0.664</span><span class="p">,</span><span class="mf">0.664</span><span class="p">,</span><span class="mf">0.664</span><span class="p">]</span>
+<span class="n">mn_total</span><span class="o">=</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[</span><span class="n">mn_t</span><span class="p">]</span><span class="o">*</span><span class="n">mn_p</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mn_comsu</span><span class="o">=</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;连铸正样Mn&#39;</span><span class="p">]</span><span class="o">-</span><span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;转炉终点Mn&#39;</span><span class="p">])</span><span class="o">*</span><span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;钢水净重&#39;</span><span class="p">]</span>
+<span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;Mn收得率&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">mn_comsu</span><span class="o">/</span><span class="p">(</span><span class="n">mn_total</span><span class="p">)</span>
+<span class="c1"># 删掉异常数据</span>
+<span class="n">MnTrain</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">MnTrain</span><span class="p">[</span><span class="n">MnTrain</span><span class="p">[</span><span class="s1">&#39;Mn收得率&#39;</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">1.5</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+<span class="c1"># 构造训练数据并对自变量值进行归一化</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="p">[</span><span class="n">nume</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-9</span><span class="p">))</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">MnTrain</span><span class="p">[[</span><span class="s1">&#39;Mn收得率&#39;</span><span class="p">]]</span>
+<span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_target</span><span class="p">,</span> <span class="n">test_target</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">Y</span><span class="o">.</span><span class="n">values</span><span class="p">,</span><span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">MnTrain</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[49]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>806</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># MnTrain #.isnull().sum()</span>
+<span class="c1"># Y.sort_values(&#39;Mn收得率&#39;)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="&#22810;&#39033;&#24335;&#25311;&#21512;">&#22810;&#39033;&#24335;&#25311;&#21512;<a class="anchor-link" href="#&#22810;&#39033;&#24335;&#25311;&#21512;">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">2</span><span class="p">)),(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span><span class="o">=</span><span class="kc">False</span><span class="p">))])</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span><span class="n">train_target</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="n">pre_y</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">r2_score</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">),</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">),</span><span class="n">metrics</span><span class="o">.</span><span class="n">mean_squared_error</span><span class="p">(</span><span class="n">pre_y</span><span class="p">,</span><span class="n">test_target</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[51]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(0.9369424067890961, 0.004281502887929982, 0.00022901577802675197)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+    </div>
 </div>
 </div>
 
