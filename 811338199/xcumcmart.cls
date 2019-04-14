@@ -22,7 +22,7 @@
       \centering
       \begin{tabular}[h]{|C{3.91cm}| C{3.91cm} |}
           \hline
-          队伍编号 & XXXXX \\
+          队伍编号 & mathorcup904945 \\
           \hline
           题号 & D \\
           \hline
