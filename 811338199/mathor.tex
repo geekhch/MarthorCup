@@ -37,13 +37,19 @@
 \begin{cnabstract}%此处没有采用sbstract命名，是为了将来如果要加入英文摘要时扩展的方便
 \setlength{\parskip}{1.4em} %段落距离
 
-\par \textit{占位文字，待替换题目需要我们通过对合金钢的生产历史数据进行分析，应该利用统计学知识以及数据处理的方法，对数据进行适当的预处理，再根据题目的具体要求，利用合理的指标和算法进行建模，并进行模型检验。}
-\par \textbf{关键词：脱氧合金化 回归拟合 线性优化}
+\par 本文针对HRB400B这一特定型号的钢材，探讨了对钢水脱氧合金化过程中对C，Mn，Si，S，P这五种元素含量的影响因素，使用线性回归模型，用于对添加合金料的自动配比并在保证钢材主要元素含量指标合格的情况下实现成本控制。
+\par 问题一中，本文针对C和Mn这两种元素，利用公式计算两种元素的收得率。针对影响因素，本文采用相关系数作为判定标准，进行定性分析，再对数据归一化处理并使用线性回归模型进行定量分析，发现收得率的影响因素主要为钢水净重和加入的元素含量、转炉终点中的原有元素含量。
+\par 问题二中，需要对Mn和C这两种元素的收得率进行预测。在进行离群值、缺失值等预处理后，以转炉终点成分的含量以及钢水净重，温度，添加的合金料的量等因素作为自变量，将C和Mn的吸收率作为结果，尝试了决策树模型，线性模型，贝叶斯模型进行拟合，并使用多个回归模型评价指标进行综合评价。其中由于贝叶斯模型和线性模型在该问题上的拟合程度较高，考虑到数据的特点，本文最终选用了线性模型用于拟合，并取得了较好的结果。
+\par 对于问题三，加入了C，Mn，Si，P，S这五个元素含量的限制条件，同时也加入了合金料的价格因素以拟合钢水脱氢化的成本。本文针对钢水脱氢化成本的优化问题，首先沿用了第二问的线性预测模型，并针对HRB400B型号钢材建立配料优化方案，根据其元素含量标准建立线性约束不等式，再根据配料价格建立价格目标函数，使用线性规划进行优化，得到最优配料成本为551元每吨。
+\par \textbf{关键词：脱氧合金化 线性回归 回归模型评价指标 线性规划}
 \end{cnabstract}
 
 \setlength{\parskip}{1.4em}
-
-%\tableofcontents\newpage%增加目录，要不要都可以。不想要的话，就在本行前加“%”（英文的百分号）
+\setcounter{tocdepth}{2}
+\setlength{\parskip}{1em} %段落距离
+\tableofcontents
+\newpage%增加目录，要不要都可以。不想要的话，就在本行前加“%”（英文的百分号）
+\setlength{\parskip}{1.4em} %段落距离
 \section{问题重述}
 \par 目前，各大钢铁企业为提高竞争力所要解决的重要问题是：如何在保证钢水质量的同时最大限度降低合金钢的生产成本。这要求我们通过历史数据对脱氧合金化环节建立数学模型，在线预测并优化投入合金的种类及数量，最终实现成本-收益最大化目标。我们需要通过题目所给数据解决如下问题：
 \begin{enumerate}[(a)]%(\arabic{section}.1)
@@ -63,6 +69,14 @@
 
 \section{假设与符号}
 \subsection{假设条件}
+\begin{enumerate}[(1)]
+\item 除了附件数据中给定的条件外，如生产设备，操作步骤和生产工艺等一致。
+\item 附件中脱氧合金化所给反应数据与化学反应时间无关，及所有反应时间相同或达到化学平衡状态。
+\item 本题附件中提供的数据符合真实情况，钢材生产过程中没有其他人为因素的影响。
+\item C、Mn等元素的收得率仅与题目所给数据项相关，即忽略其他可能存在的潜在影响。
+\end{enumerate}
+
+
 \subsection{符号说明}
 \begin{table}[htbp]
 	\centering
@@ -72,11 +86,15 @@
 		\tabucline[1.5pt]{-}
 		$\mu$ & 某组数据的平均值\\
 		$\sigma$ & 某组数据的标准差\\
+		$R_x$ & 元素x在某种化合物配料中的含量\\
+		$X$ & 所有可能影响合金元素收得率的因素的值构成的向量，例如转炉温度、合金配料的质量等\\
+		$f(x)$ & 生产单位质量HRN400B所需配料的成本\\
+		$Y$ & 元素收得率或连铸正样中元素的含量\\
 		\tabucline[1.5pt]{-}
 	\end{tabu}
-	\caption{Mn收得率与主要影响因素的相关系数\label{tb:tbs2}}
+	\caption{符号说明\label{tb:fuhao}}
 \end{table}
-\section{模型的建立与求解}
+
 \section{问题一的解答}
 \subsection{问题一的分析}
 \par 由题目可得，合金收得率是指脱氧合金化时被钢水吸收的合金元素的重量与加入 该元素总重量之比。转炉终点指脱氧合金化之前钢水中某个元素的含量，连铸正样为脱氧合金化之后钢水中该元素的含量，因而被吸收的合金元素重量可用连铸正样与转炉终点的差值表示，再除以加入的该元素总重量即可求得历史收得率。通过分别分析各变量与C、Mn之间的相关系数初步判断合金收得率的影响因素，其次通过构建线性回归与归一化进行定量分析，最终得出收得率的影响因素。
@@ -220,7 +238,7 @@ $Beg_i$、$Out_i$分别为脱氧合金化前后钢水中元素i的含量。计�
 最终实现出的结果（对C） R2 = 0.7253 ，MAE = 0.0513， MSE= 0.0070
 最终实现出的结果（对Mn）R2 = 0.7666 ，MAE = 0.0199， MSE= 0.0064
 \subsection{问题二结论}
-我们主要使用了多个个模型进行预测，其中效果最好的还是线性模型，贝叶斯线性模型对比普通线性模型在本问题上的提升相当有限。而决策树回归可能由于样本的特性问题，拟合效果较为一般。最终我们选用线性回归模型作为预测模型。\textbf{参数如下}
+我们主要使用了多个个模型进行预测，其中效果最好的还是线性模型，贝叶斯线性模型对比普通线性模型在本问题上的提升相当有限。而决策树回归可能由于样本的特性问题，拟合效果较为一般。最终我们选用线性回归模型作为预测模型。
 
 
 
@@ -259,31 +277,49 @@ $Beg_i$、$Out_i$分别为脱氧合金化前后钢水中元素i的含量。计�
 		R_PX<0.00045 
 	\end{array}\right.
 \end{equation}
-使用内点法求解得到满足上述约束条件的优化结果，最优方案下，每吨HRB400B配料成本约为551元，对应每种配料的加入质量如下表：
+其中，$R_x$为每种配料中元素$x$的含量。使用内点法求解得到满足上述约束条件的优化结果，最优方案下，每吨HRB400B配料成本约为551元，对应每种配料的加入质量如表\ref{tb:best}
 \begin{table}[htbp]
 	\centering
 	\begin{tabu}{l l|l l}
 		\tabucline[1.5pt]{-}
-		名称 & 配比(kg/每千克钢水) & 名称 & 配比(kg/每千克钢水)\\
+		名称 & 配比(kg/每t钢水) & 名称 & 配比(kg/每t钢水)\\
 		\tabucline[1.5pt]{-}
-		氮化钒铁FeV55N11-A & 1.484e-11 & 硅锰面（硅锰渣） & 4713 \\
+		氮化钒铁FeV55N11-A & 1.484e-11 & 硅锰面（硅锰渣） & 413 \\
 		低铝硅铁 & 2.073e-10 & 硅铁(合格块) & 8.955e-12 \\
 		钒氮合金(进口) & 42.13 & 硅铁FeSi75-B & 5.435e-12 \\
-		钒铁(FeV50-A) & 168.0 & 石油焦增碳剂 & 1059 \\
+		钒铁(FeV50-A) & 168.0 & 石油焦增碳剂 & 159 \\
 		钒铁(FeV50-B) & 2.625e-11 & 锰硅合金FeMn64Si27(合格块) & 4.947e-11 \\
 		硅铝钙 & 2.935e-11 & 锰硅合金FeMn68Si18(合格块) & 1.191e-11 \\
 		硅铝合金FeAl30Si25 & 1.218e-11 & 碳化硅(55\%) & 4.3934e-11 \\
-		硅铝锰合金球 & 1.431e-10 & 硅钙碳脱氧剂 & 1713\\
+		硅铝锰合金球 & 1.431e-10 & 硅钙碳脱氧剂 & 173\\
 		\tabucline[1.5pt]{-}
 	\end{tabu}
 	\caption{最优方案合金配料\label{tb:best}}
 \end{table}
+\newpage
+\section{问题四：建议信}
+\subsection{改进生产工艺，降低生产成本}
+\begin{enumerate}[(1)]
+\item 准确判断钢铁收得率的影响因素，精准控制原料投入比。对于影响收得率较大的原料，企业应当精准控制投入用量，避免出现原料不足以及过度浪费的现象。对于温度以及焦比的控制也应当准确精细，避免生产过程中的浪费。
+\item 稳定配料比，与供应商建立长期合作关系。在问题三中我们给出了HRB400B最优配料方案，可将配料成本控制在551元/t左右。钢铁企业可通过尝试建立多种模型确定最优生产方案，进而选取合适的配料比并实现长期的稳定投入，这使得钢铁企业与上游供应商建立了稳定的长期关系，从而增强了钢铁企业的议价能力，使得二者在企业合作方面实现共赢。
+\item 综合考虑原料价格与质量，采用合适品位的原料，降低投入成本。原料成本过高是导致钢铁企业成本过高的重要因素之一，由于原材料，特别是铁矿石的定价模式是以品位（即质量）为基础的，在矿石基准价较高的情况下，不同品位的铁矿石价格可以相差很大。因此，适当降低入炉矿石的品位可以在一定程度上降低原料的采购成本，并进而达到降低生产成本的目的。	
+\end{enumerate}
+
+\subsection{建立最优生产模式，提高资金使用效率}
+钢铁企业应在进行生产之前对产品的收得率、产出率进行一定程度上的评估，并对各项费用进行预估，建立数学模型以及算法判断最优生产模式，这能够在保证钢铁质量的条件下最大限度地节约成本，提高资金的使用效率。
+\subsection{产品专一精细化生产，形成规模效应}
+对于生产多种产品型号钢铁的企业可以对每种型号的钢铁都进行模型的预估，并且通过建立目标价格函数确定最优生产的方案对各型号产品横向比较，停止生产成本-收益比较低的钢铁，对于成本较低、收得率较高的产品进行专一化精细化生产，并将资本进行扩大再生产，形成规模经济效应，降低单位生产成本，实现企业利润最大化。
 
 \section{模型的检验}
-\section{进一步讨论}
-\section{模型的优缺点}
-占位
+在问题二、三的建模和求解过程中，我们使用了$R^2$系数、平均绝对误差、平均绝对平方误差、绝对误差百分比等多个回归评价指标来验证我们的线性回归模型的可靠性，总体误差较小，但在对P元素的连铸正样含量的预测时存在较大误差，但这并不影响模型的使用。
+\par 问题三中我们优化得到的最优配料比使得HRB400B配料成本降低到551元/吨，查阅资料发现当前该型号成品价格为3000-5000元/吨，可以推测我们得到的优化结果较为合理。
 
+\section{模型的优缺点及推广}
+\subsection{模型优点}
+采用线性拟合中单纯形法的方法，极大地降低了模型拟合的复杂度，计算简便，能够直观的反映结果。同时该模型具有普适性，能够推广用于其他钢型的预估评判，只需要替换式\ref{eq:need}中的边界值条件以及式\ref{eq:dest}中的价格系数，便能轻松实现模型在其他场景下的应用。
+\subsection{模型缺点}
+由于题目所给数据有限，模型可能存在没有考虑其他潜在影响，导致模型对收得率预测有一定误差，进而导致问题三中价格优化出现偏差。此外，由于所给数据量有限，我们使用简单的线性模型，无法对复杂的化学反应进行精确地拟合，模型容易出现过拟合的现象，并且对于噪声（非正常）数据的处理能力较弱，容易受到影响，若数据量充足的情况下，可以考虑将预测模型替换为神经网络等非线性模型，再使用遗传算法进行价格目标函数的优化。
+\section{参考文献}
 \begin{thebibliography}{1}
 \bibitem{1} [pp. 2825-2830]，Scikit-learn: Machine Learning in Python， Pedregosa et al.， JMLR 12， 2011。
 \bibitem{2} [TF762.3]胡俊辉、林俊，基于线性规划的高合金钢配料数学模型，中国金属学会，200940，74-76，2009。
@@ -304,47 +340,364 @@ $Beg_i$、$Out_i$分别为脱氧合金化前后钢水中元素i的含量。计�
 \end{enumerate}
 \subsection{代码及运行结果}
 \subsubsection{问题一代码}
-\begin{lstlisting}
-	import pandas as pd
-	import matplotlib.pyplot as plt
-	import numpy as np
-	import pylab
-	pylab.rcParams['figure.figsize'] = (20.0, 15.0)
-	data = pd.read_excel('data1.xlsx')
-	data.drop(data[data['连铸正样C'].isnull()].index,inplace=True)
-	c_t=['钒铁(FeV50-A)','钒铁(FeV50-B)','硅铝合金FeAl30Si25','硅锰面（硅锰渣）','硅铁(合格块)','硅铁FeSi75-B','石油焦增碳剂','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)','碳化硅(55%)','硅钙碳脱氧剂']
-	c_p=[0.0031,0.0031,0.00374,0.017,0.0006,0.0006,0.96,0.017,0.017,0.3,0.225692308]
-	mn_t=['硅铝锰合金球','硅锰面（硅锰渣）','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)']
-	mn_p = [0.3,0.664,0.664,0.664]
-	data['加入C含量']=(data[c_t]*c_p).sum(axis=1)
-	data['吸收C质量']=(data['连铸正样C']-data['转炉终点C'])*data['钢水净重']
-	data['C收得率'] = data['吸收C质量']/data['加入C含量']
-	data['加入Mn含量']=(data[mn_t]*mn_p).sum(axis=1)
-	data['吸收Mn质量']=(data['连铸正样Mn']-data['转炉终点Mn'])*data['钢水净重']
-	data['Mn收得率']=data['吸收Mn质量']/data['加入Mn含量']
-	h = data['转炉终点C'].hist(bins=100,)
-	plt.xticks(fontsize=20)
-	plt.yticks(fontsize=20)
-	plt.title('转炉终点C',fontproperties="SimHei",fontsize=35)
-	h.grid(False)
-	nume = ['转炉终点温度', '转炉终点C', '转炉终点S',
-		   '转炉终点Si', '钢水净重', 
-			'氮化钒铁FeV55N11-A', '低铝硅铁',
-		   '钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '钒铁(FeV50-B).1', '硅铝钙',
-		   '硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B',
-		   '石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55%)',
-		   '硅钙碳脱氧剂','C收得率','Mn收得率']
-	nm_df = data[nume].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
-	data[list(used.index)+['C收得率']].to_csv('C_train_data.csv',index=False)
-	
-	c_corr = data[nume].corr()[['C收得率']]
-	used = c_corr[(abs(c_corr['C收得率'])>0.15)]
-	used
-	c_corr = data[nume].corr()[['Mn收得率']]
-	used = c_corr[(abs(c_corr['Mn收得率'])>0.15)]
-	used.sort_values('Mn收得率')
-	data.head()
-	
-	
-\end{lstlisting}
+% \centerline{\rule{16cm}{0.15em}}
+\noindent
+import pandas as pd \\
+import matplotlib.pyplot as plt \\
+import numpy as np  \\
+import pylab  \\
+pylab.rcParams['figure.figsize'] = (20.0, 15.0)  \\
+data = pd.read\_excel('data1.xlsx')  \\
+data.drop(data[data['连铸正样C'].isnull()].index,inplace=True)  \\
+c\_t=['钒铁(FeV50-A)','钒铁(FeV50-B)','硅铝合金FeAl30Si25','硅锰面（硅锰渣）','硅铁(合格块)','硅铁FeSi75-B','石油焦增碳剂','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)','碳化硅(55\%)','硅钙碳脱氧剂']  \\
+c\_p=[0.0031,0.0031,0.00374,0.017,0.0006,0.0006,0.96,0.017,0.017,0.3,0.225692308]  \\
+mn\_t=['硅铝锰合金球','硅锰面（硅锰渣）','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)']  \\
+mn\_p = [0.3,0.664,0.664,0.664]  \\
+data['加入C含量']=(data[c\_t]*c\_p).sum(axis=1)  \\
+data['吸收C质量']=(data['连铸正样C']-data['转炉终点C'])*data['钢水净重']  \\
+data['C收得率'] = data['吸收C质量']/data['加入C含量']  \\
+data['加入Mn含量']=(data[mn\_t]*mn\_p).sum(axis=1)  \\
+data['吸收Mn质量']=(data['连铸正样Mn']-data['转炉终点Mn'])*data['钢水净重']  \\
+data['Mn收得率']=data['吸收Mn质量']/data['加入Mn含量']  \\
+h = data['转炉终点C'].hist(bins=100,)  \\
+plt.xticks(fontsize=20)  \\
+plt.yticks(fontsize=20)  \\
+plt.title('转炉终点C',fontproperties="SimHei",fontsize=35)  \\
+h.grid(False)  \\
+nume = ['转炉终点温度', '转炉终点C', '转炉终点S',  \\
+		'转炉终点Si', '钢水净重',   \\
+		'氮化钒铁FeV55N11-A', '低铝硅铁',  \\
+		'钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '钒铁(FeV50-B).1', '硅铝钙',  \\
+		'硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B',  \\
+		'石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55\%)',  \\
+		'硅钙碳脱氧剂','C收得率','Mn收得率']  \\
+nm\_df = data[nume].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))  \\
+data[list(used.index)+['C收得率']].to\_csv('C\_train\_data.csv',index=False)  \\
+\\
+c\_corr = data[nume].corr()[['C收得率']]  \\
+used = c\_corr[(abs(c\_corr['C收得率'])>0.15)]  \\
+used  \\
+c\_corr = data[nume].corr()[['Mn收得率']]  \\
+used = c\_corr[(abs(c\_corr['Mn收得率'])>0.15)]  \\
+used.sort\_values('Mn收得率')  \\
+data.head()  \\
+\subsection{问题二代码}
+\noindent
+import numpy as np  \\
+from sklearn import tree,metrics,svm,ensemble,neighbors  \\
+import pandas as pd  \\
+from sklearn.model\_selection import train\_test\_split,KFold  \\
+from sklearn import linear\_model  \\
+import xgboost as xgb  \\
+from sklearn.preprocessing import PolynomialFeatures  \\
+from sklearn.pipeline import Pipeline  \\
+import matplotlib.pyplot as plt  \\
+nume = ['转炉终点温度', '转炉终点C', '转炉终点S',  \\
+        '钢水净重', '氮化钒铁FeV55N11-A', '低铝硅铁',  \\
+       '钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '钒铁(FeV50-B).1', '硅铝钙',  \\
+       '硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B',
+       '石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55%)',
+       '硅钙碳脱氧剂']  \\
+CTrain = pd.read\_excel('q1\_1\_收得率.xls')[nume+['C收得率']]  \\
+CTrain = CTrain.drop(CTrain[CTrain['C收得率'].isnull()].index)  \\
+outs=['转炉终点温度', '转炉终点C','钢水净重']  \\
+for out in outs:  \\
+    CTrain.drop(CTrain[(CTrain[out]>(CTrain[out].mean()+3*CTrain[out].std()))|(CTrain[out]<(CTrain[out].mean()-3*CTrain[out].std()))].index,inplace=True)  \\
+    
+CTrain = CTrain.fillna(CTrain.mean())  \\
+X = CTrain[nume] \#[['钢水净重','连铸正样C', '连铸正样Ceq\_val', '低铝硅铁','石油焦增碳剂']]  \\
+X = X[nume].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)+1e-10)).values  \\
+Y = CTrain[['C收得率']].values  \\
+len(CTrain.values)  \\
+plt.plot(X['钢水净重'][::50])  \\
+plt.plot(CTrain['C收得率'][::50])  \\
+CTrain.head(1)  \\
+clf = tree.DecisionTreeRegressor()   \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index])  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+
+clf = linear\_model.LinearRegression()  \\
+ki = 4  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index])  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+mapk={}  \\
+for i in range(len(nume)):  \\
+    mapk[nume[i]]=np.round(clf.coef\_[0][i],4)  \\
+    print(nume[i],' \& ',np.round(clf.coef\_[0][i],4))  \\
+clf = svm.SVR(gamma='auto')  \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index].flatten().astype(np.float32))  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+
+clf = linear\_model.BayesianRidge()  \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index].flatten().astype(np.float32))  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+
+\noindent
+\# \#\#\# 集成  \\
+
+\# In[117]:  \\
+\noindent
+
+clf = ensemble.GradientBoostingRegressor(n\_estimators=100, learning\_rate=0.1,max\_depth=1, random\_state=0, loss='ls')  \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index].flatten().astype(np.float32))  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+clf = Pipeline([('poly', PolynomialFeatures(degree=2)),('linear', linear\_model.LinearRegression(fit\_intercept=False))])  \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index].flatten().astype(np.float32))  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+nume = ['转炉终点温度', '转炉终点C', '转炉终点Mn', '转炉终点S',  \\
+       '转炉终点Si', '钢水净重', '连铸正样Mn',   \\
+\#         '连铸正样C','连铸正样S', '连铸正样P', '连铸正样Si',  \\
+\#        '连铸正样Ceq\_val', '连铸正样Cr', '连铸正样Ni\_val', '连铸正样Cu\_val',  \\
+\#        '连铸正样V\_val', '连铸正样Alt\_val', '连铸正样Als\_val', '连铸正样Mo\_val', '连铸正样Ti\_val',  \\
+        '氮化钒铁FeV55N11-A', '低铝硅铁',  \\
+       '钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '钒铁(FeV50-B).1', '硅铝钙',  \\
+       '硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B',  \\
+       '石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55\%)',  \\
+       '硅钙碳脱氧剂']  \\
+MnTrain = pd.read\_excel('data1.xlsx')[nume]  \\
+\# Mn初始含量较低，对反应收得率影响小，使用均值替换缺失值  \\
+MnTrain[['转炉终点Mn']] = MnTrain[['转炉终点Mn']].fillna(MnTrain[['转炉终点Mn']].mean())  \\
+\# 去掉为对合金化后合金钢采样的数据  \\
+MnTrain = MnTrain.drop(MnTrain[MnTrain['连铸正样Mn'].isnull()].index)  \\
+\# 使用均值替代少量的缺失值  \\
+MnTrain[nume] = MnTrain[nume].fillna(MnTrain[nume].mean())  \\
+\# 重新计算Mn收得率  \\
+mn\_t=['硅铝锰合金球','硅锰面（硅锰渣）','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)']  \\
+mn\_p = [0.3,0.664,0.664,0.664]  \\
+mn\_total=(MnTrain[mn\_t]*mn\_p).sum(axis=1)  \\
+mn\_comsu=(MnTrain['连铸正样Mn']-MnTrain['转炉终点Mn'])*MnTrain['钢水净重']  \\
+MnTrain['Mn收得率']=mn\_comsu/(mn\_total)  \\
+\# 删掉异常数据  \\
+MnTrain = MnTrain.drop(MnTrain[MnTrain['Mn收得率']>1.5].index)  \\
+\\
+\# 构造训练数据并对自变量值进行归一化  \\
+X = MnTrain[nume].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)+1e-9))  \\
+X.drop('连铸正样Mn',axis=1,inplace=True)  \\
+X=X.values  \\
+Y = MnTrain[['Mn收得率']].values  \\
+\# train\_data, test\_data, train\_target, test\_target = train\_test\_split(X.values,Y.values,test\_size=0.2)  \\
+len(Y)  \\
+\\
+clf = Pipeline([('poly', PolynomialFeatures(degree=2)),('linear', linear\_model.LinearRegression(fit\_intercept=False))])  \\
+ki = 10  \\
+kf = KFold(n\_splits=ki)  \\
+r2,mae,mse=0,0,0  \\
+for train\_index,test\_index in kf.split(X):  \\
+    clf = clf.fit(X[train\_index],Y[train\_index].flatten().astype(np.float32))  \\
+    pre\_y = clf.predict(X[test\_index])  \\
+    r2+=metrics.r2\_score(pre\_y,Y[test\_index])  \\
+    mae+=metrics.mean\_absolute\_error(pre\_y,Y[test\_index])  \\
+    mse+=metrics.mean\_squared\_error(pre\_y,Y[test\_index])  \\
+r2/ki,mae/ki,mse/ki  \\
+clf = linear\_model.BayesianRidge()  \\
+clf = clf.fit(train\_data,train\_target.flatten())  \\
+pre\_y = clf.predict(test\_data)  \\
+metrics.r2\_score(pre\_y,test\_target),metrics.mean\_absolute\_error(pre\_y,test\_target),metrics.mean\_squared\_error(pre\_y,test\_target)  \\
+\\
+clf = linear\_model.LinearRegression()  \\
+clf = clf.fit(train\_data,train\_target)  \\
+pre\_y = clf.predict(test\_data)  \\
+metrics.r2\_score(pre\_y,test\_target),metrics.mean\_absolute\_error(pre\_y,test\_target),metrics.mean\_squared\_error(pre\_y,test\_target)  \\
+\\
+\subsection{问题三代码}
+\noindent
+\#!/usr/bin/env python \\
+\# coding: utf-8 \\
+\# In[2]: \\
+import numpy as np \\
+from sklearn import tree,metrics,svm,ensemble,neighbors \\
+import pandas as pd \\
+from sklearn.model\_selection import train\_test\_split,KFold \\
+from sklearn import linear\_model \\
+import xgboost as xgb \\
+from sklearn.preprocessing import PolynomialFeatures \\
+from sklearn.pipeline import Pipeline \\
+from scipy import optimize \\
+\# In[3]: \\
+mixture = ['氮化钒铁FeV55N11-A','低铝硅铁','钒氮合金(进口)','钒铁(FeV50-A)','钒铁(FeV50-B)','硅铝钙','硅铝合金FeAl30Si25','硅铝锰合金球', \\
+'硅锰面（硅锰渣）','硅铁(合格块)','硅铁FeSi75-B','石油焦增碳剂','锰硅合金FeMn64Si27(合格块)','锰硅合金FeMn68Si18(合格块)', \\
+'碳化硅(55%)','硅钙碳脱氧剂'] \\
+columns = ['转炉终点温度', '转炉终点C', '转炉终点Mn', '转炉终点S', '转炉终点P', \\
+'转炉终点Si', '钢水净重', '连铸正样C', '连铸正样Mn', '连铸正样S', '连铸正样P', '连铸正样Si', '氮化钒铁FeV55N11-A', '低铝硅铁', \\
+'钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '钒铁(FeV50-B).1', '硅铝钙', \\
+'硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B', \\
+'石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55%)', \\
+'硅钙碳脱氧剂'] \\
+x\_col = [ '转炉终点C', '转炉终点Mn', '转炉终点S', '转炉终点P', \\
+'转炉终点Si','转炉终点温度', '氮化钒铁FeV55N11-A', '低铝硅铁', \\
+'钒氮合金(进口)', '钒铁(FeV50-A)', '钒铁(FeV50-B)', '硅铝钙', \\
+'硅铝合金FeAl30Si25', '硅铝锰合金球', '硅锰面（硅锰渣）', '硅铁(合格块)', '硅铁FeSi75-B', \\
+'石油焦增碳剂', '锰硅合金FeMn64Si27(合格块)', '锰硅合金FeMn68Si18(合格块)', '碳化硅(55%)', \\
+'硅钙碳脱氧剂'] \\
+price = [350000,6500,350000,205000,205000,11800,1000,8500,7600,6000,6000,4600,8150,8150,6100,4000] \\
+len(price) \\
+\# \#\#\# 计算单位钢水重量加入配料的质量，对最终合金元素浓度的预测模型 \\
+\# In[4]: \\
+data = pd.read\_excel('./data1.xlsx') \\
+data.drop(data[data['连铸正样C'].isnull()].index,inplace=True) \\
+\# data=data[data['钢号']=='HRB400B    '][columns] \\
+\# 离群值处理 \\
+outs=['转炉终点温度', '转炉终点C', '转炉终点Mn', '转炉终点S', '转炉终点P', \\
+'转炉终点Si', '钢水净重', '连铸正样C', '连铸正样Mn', '连铸正样S', '连铸正样P', '连铸正样Si'] \\
+for out in outs: \\
+data.drop(data[(data[out]>(data[out].mean()+3*data[out].std()))|(data[out]<(data[out].mean()-3*data[out].std()))].index,inplace=True) \\
+\#单位钢水重量的浓度 \\
+for m in mixture: \\
+data[m]/=data['钢水净重'] \\
+data = data[columns].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)+1e-15)) \\
+data.drop('钢水净重',axis=1,inplace=True) \\
+data.fillna(data.mean(),inplace=True) \\
+data2 = pd.read\_excel('data2.xlsx') \\
+data2.head(2) \\
+data['钒铁(FeV50-B)'] = data['钒铁(FeV50-B)']+data['钒铁(FeV50-B).1'] \\
+data.drop('钒铁(FeV50-B).1',axis=1,inplace=True) \\
+\# X = data[x\_col].apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)+1e-10)).values \\
+X = data[x\_col].values \\
+len(data)\#.isna().sum() \\
+\# \#\#\# 以下分别计算五种元素的预测模型，变量X为1kg钢水质量加入的每种合金配料质量的向量、温度、初始合金元素浓度 \\
+\# In[6]: \\
+Y = data['连铸正样Si'].values \\
+clf = linear\_model.LinearRegression() \\
+ki = 8 \\
+kf = KFold(n\_splits=ki) \\
+r2,mae,mse=0,0,0 \\
+for train\_index,test\_index in kf.split(X): \\
+clf\_Si = clf.fit(X[train\_index],Y[train\_index]) \\
+pre\_y = clf\_Si.predict(X[test\_index]) \\
+r2+=metrics.r2\_score(Y[test\_index],pre\_y) \\
+mae+=metrics.mean\_absolute\_error(Y[test\_index],pre\_y) \\
+mse+=metrics.mean\_squared\_error(Y[test\_index],pre\_y) \\
+r2/ki,mae/ki,mse/ki,np.mean(np.abs((Y[test\_index]-pre\_y)/Y[test\_index])) \# r2系数，平均绝对误差 \\
+\# In[7]: \\
+Y = data['连铸正样C'].values \\
+clf = linear\_model.LinearRegression() \\
+ki = 8 \\
+kf = KFold(n\_splits=ki) \\
+r2,mae,mse=0,0,0 \\
+for train\_index,test\_index in kf.split(X): \\
+clf\_C = clf.fit(X[train\_index],Y[train\_index]) \\
+pre\_y = clf\_C.predict(X[test\_index]) \\
+r2+=metrics.r2\_score(Y[test\_index],pre\_y) \\
+mae+=metrics.mean\_absolute\_error(Y[test\_index],pre\_y) \\
+mse+=metrics.mean\_squared\_error(Y[test\_index],pre\_y) \\
+r2/ki,mae/ki,mse/ki,np.mean(np.abs((Y[test\_index]-pre\_y)/Y[test\_index])) \\
+\# In[8]: \\
+Y = data['连铸正样S'].values \\
+clf = linear\_model.LinearRegression() \\
+ki = 8 \\
+kf = KFold(n\_splits=ki) \\
+r2,mae,mse=0,0,0 \\
+for train\_index,test\_index in kf.split(X): \\
+clf\_S = clf.fit(X[train\_index],Y[train\_index]) \\
+pre\_y = clf\_S.predict(X[test\_index]) \\
+r2+=metrics.r2\_score(Y[test\_index],pre\_y) \\
+mae+=metrics.mean\_absolute\_error(Y[test\_index],pre\_y) \\
+mse+=metrics.mean\_squared\_error(Y[test\_index],pre\_y) \\
+r2/ki,mae/ki,mse/ki,np.mean(np.abs((Y[test\_index]-pre\_y)/Y[test\_index])) \\
+\# In[9]: \\
+\#\# S,P缺失值较多，去掉缺失值行后计算模型 \\
+\# In[10]: \\
+data.drop(data[data['转炉终点Mn'].isnull()].index,inplace=True) \\
+data.drop(data[data['转炉终点P'].isnull()].index,inplace=True) \\
+\# In[11]: \\
+Y = data['连铸正样P'].values \\
+clf = linear\_model.LinearRegression() \\
+ki = 8 \\
+kf = KFold(n\_splits=ki) \\
+r2,mae,mse=0,0,0 \\
+for train\_index,test\_index in kf.split(X): \\
+clf\_P = clf.fit(X[train\_index],Y[train\_index]) \\
+pre\_y = clf\_P.predict(X[test\_index]) \\
+r2+=metrics.r2\_score(Y[test\_index],pre\_y) \\
+mae+=metrics.mean\_absolute\_error(Y[test\_index],pre\_y) \\
+mse+=metrics.mean\_squared\_error(Y[test\_index],pre\_y) \\
+r2/ki,mae/ki,mse/ki,np.mean(np.abs((Y[test\_index]-pre\_y)/Y[test\_index])) \\
+\# In[12]: \\
+Y = data['连铸正样Mn'].values \\
+clf = linear\_model.BayesianRidge() \\
+ki = 8 \\
+kf = KFold(n\_splits=ki) \\
+r2,mae,mse=0,0,0 \\
+for train\_index,test\_index in kf.split(X): \\
+clf\_Mn = clf.fit(X[train\_index],Y[train\_index]) \\
+pre\_y = clf\_Mn.predict(X[test\_index]) \\
+r2+=metrics.r2\_score(Y[test\_index],pre\_y) \\
+mae+=metrics.mean\_absolute\_error(Y[test\_index],pre\_y) \\
+mse+=metrics.mean\_squared\_error(Y[test\_index],pre\_y) \\
+\#\# r2决定系数，绝对误差，绝对均方误差，绝对误差百分比 \\
+r2/ki,mae/ki,mse/ki,np.mean(np.abs((Y[test\_index]-pre\_y)/Y[test\_index])) \\
+\# \#\# 使用常量替代不是配料的变量，计算一吨合金在下列条件下的最低配料费用 \\
+\# In[13]: \\
+init\_ = [data['转炉终点C'].mean(),data['转炉终点Mn'].mean(),data['转炉终点S'].mean(),data['转炉终点P'].mean(),data['转炉终点Si'].mean(),data['转炉终点温度'].mean()] \\
+\# \#\# 建立线性约束不等式以及目标函数,并优化求解 \\
+\# In[15]: \\
+c = data2['价格(元/吨)'].values/1000 \#配料价格作为目标函数系数/kg \\
+a = np.array([ \\
+list(clf\_C.coef\_[6:]),list(-clf\_C.coef\_[6:]),list(clf\_Mn.coef\_[6:]),list(-clf\_Mn.coef\_[6:]), \\
+list(clf\_S.coef\_[6:]),list(clf\_P.coef\_[6:]), \\
+list(clf\_Si.coef\_[6:]),list(-clf\_Si.coef\_[6:]) \\
+b = np.array([ \\
+0.0025-sum(clf\_C.coef\_[:6]*init\_),-0.0019+sum(clf\_C.coef\_[:6]*init\_), \\
+0.016-sum(clf\_Mn.coef\_[:6]*init\_),-0.013+sum(clf\_Mn.coef\_[:6]*init\_), \\
+0.00045-sum(clf\_S.coef\_[:6]*init\_),0.00045-sum(clf\_P.coef\_[:6]*init\_), \\
+0.0065-sum(clf\_Si.coef\_[:6]*init\_),-0.005+sum(clf\_Si.coef\_[:6]*init\_) \\
+\#设置配料变量取值范围为0到正无穷 \\
+bds = [] \\
+for pl in data2['合金配料']: \\
+bds.append((0,None)) \\
+optimize.linprog(c,A\_ub=a,b\_ub=b,bounds=bds,method='interior-point') \\
+\# In[26]: \\
+v = [1.48472616e-14, 2.07354363e-13, 4.21345325e-02, 1.68022881e-01, \\
+2.62549062e-14, 2.93584684e-14, 1.21898570e-14, 1.43150865e-13, \\
+4.71352500e+00, 8.95557247e-15, 5.43594869e-15, 1.05918868e+00, \\
+4.94799808e-14, 1.19180051e-14, 4.39332087e-14, 1.71373088e+00] \\
+for i in range(8): \\
+print(data2['合金配料'][i],'\&',1000*v[i],'\&',data2['合金配料'][i+8],'\&',1000*v[i+8],'\\\\') \\
 \end{document}
